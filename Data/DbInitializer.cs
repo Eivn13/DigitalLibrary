@@ -29,7 +29,7 @@ namespace Digital_library.Data
                 {
                     Name = "Book2",
                     BorrowedBy = u2,
-                    Until = today.AddDays(3)
+                    Until = today.AddHours(20)
                 },
                 new Book
                 {

@@ -104,4 +104,17 @@ public class BookService
         }
     }
 
+    public List<String?> GetNotices()
+    {
+        DateTime now = DateTime.Now;
+
+        return _context.Books
+            .Include(p => p.BorrowedBy)
+            .AsNoTracking()
+            .Where(book => book.Until <= now.AddDays(1) && book.Until > now)
+            .Select(book => book.BorrowedBy != null ? book.BorrowedBy.Email : null)
+            .Where(email => email != null)
+            .ToList();
+    }
+
 }

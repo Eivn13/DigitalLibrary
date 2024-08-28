@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+
 namespace Digital_library.Models;
 
 public class Book

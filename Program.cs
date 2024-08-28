@@ -13,6 +13,8 @@ builder.Services.AddSqlite<BookContext>("Data Source=DigitalLibrary.db");
 
 builder.Services.AddScoped<BookService>();
 
+builder.Services.AddHostedService<MailService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

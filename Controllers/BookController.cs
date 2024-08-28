@@ -100,5 +100,11 @@ public class BookController : ControllerBase
             return NotFound();
         }
     }
+
+    [HttpGet("checknotices")]
+    public List<String?> CheckNotices()
+    {
+        return _service.GetNotices();
+    }
     
 }
