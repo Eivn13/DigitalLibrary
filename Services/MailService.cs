@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+namespace Digital_library.Services;
+
 public class MailService : BackgroundService
 {
     private readonly HttpClient _httpClient;
