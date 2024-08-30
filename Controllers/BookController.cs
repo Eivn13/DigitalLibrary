@@ -43,8 +43,16 @@ public class BookController : ControllerBase
         var bookToUpdate = _service.GetById(id);
         if (bookToUpdate is not null)
         {
-            _service.UpdateBook(id, book);
-            return NoContent();
+            var (success, message) = _service.UpdateBook(id, book);
+
+            if (!success)
+            {
+                return BadRequest(new { error = message });
+            }
+            else
+            {
+                return Ok(message);
+            }
         }
         else
         {
@@ -59,8 +67,16 @@ public class BookController : ControllerBase
 
         if (book is not null)
         {
-            _service.DeleteById(id);
-            return Ok();
+            var (success, message) = _service.DeleteById(id);
+            
+            if (!success)
+            {
+                return BadRequest(new { error = message });
+            }
+            else
+            {
+                return Ok(message);
+            }
         }
         else
         {
@@ -75,8 +91,16 @@ public class BookController : ControllerBase
 
         if(book is not null)
         {
-            _service.BorrowBook(bookId, userId, until);
-            return NoContent();
+            var (success, message) = _service.BorrowBook(bookId, userId, until);
+
+            if (!success)
+            {
+                return BadRequest(new { error = message });
+            }
+            else
+            {
+                return Ok(message);
+            }
         }
         else
         {
@@ -92,8 +116,16 @@ public class BookController : ControllerBase
 
         if (book is not null)
         {
-            _service.ReturnBook(bookId, userId);
-            return Ok();
+            var (success, message) = _service.ReturnBook(bookId, userId);
+
+            if (!success)
+            {
+                return BadRequest(new { error = message });
+            }
+            else
+            {
+                return Ok(message);
+            }
         }
         else
         {

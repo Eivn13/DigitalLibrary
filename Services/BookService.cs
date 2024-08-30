@@ -28,53 +28,59 @@ public class BookService
             .AsNoTracking()
             .SingleOrDefault(p => p.Id == id);
     }
-
-    public void UpdateBook(int bookId, Book book)
+    
+    public (bool success, string message) UpdateBook(int bookId, Book book)
     {
         var bookToUpdate = _context.Books.Find(bookId);
 
         if (bookToUpdate is null)
         {
-            throw new InvalidOperationException("Book does not exist.");
+            return (false, "Book does not exist.");
         }
         
         bookToUpdate.Name = book.Name;
         bookToUpdate.BorrowedBy = book.BorrowedBy;
         bookToUpdate.Until = book.Until;
-
         _context.SaveChanges();
+
+        return (true, "Book was successfully updated.");
     }
 
-    public void DeleteById(int id)
+    public (bool success, string message) DeleteById(int id)
     {
         var bookToDelete = _context.Books.Find(id);
-        if (bookToDelete is not null)
+        
+        if (bookToDelete is null)
         {
-            _context.Books.Remove(bookToDelete);
-            _context.SaveChanges();
+            return (false, "Book does not exist.");
         }
+        
+        _context.Books.Remove(bookToDelete);
+        _context.SaveChanges();
+
+        return (true, "Book was successfully deleted.");
     }
 
-    public void BorrowBook(int bookId, int userId, int until)
+    public (bool success, string message) BorrowBook(int bookId, int userId, int until)
     {
         var bookToBorrow = _context.Books.Find(bookId);
         var user = _context.Users.Find(userId);
 
         if (bookToBorrow is null || user is null)
         {
-            throw new InvalidOperationException("Book or user does not exist.");
+            return (false, "Book or user does not exist.");
         }
 
         if (bookToBorrow.BorrowedBy is not null)
         {
-            throw new InvalidOperationException("Someone already borrowed this book.");
+            return (false, "Someone already borrowed this book.");
         }
 
         bookToBorrow.BorrowedBy = user;
 
         if (until < 1 || until > 14)
         {
-            throw new InvalidOperationException("Cannot borrow book for less than a day or more than two weeks.");
+            return (false, "Cannot borrow book for less than a day or more than two weeks.");
         }
         
         DateTime today = DateTime.Today;
@@ -82,16 +88,18 @@ public class BookService
         user.BorrowedBooks?.Add(bookToBorrow);
 
         _context.SaveChanges();
+
+        return (true, "Book was successfully borrowed.");
     }
 
-    public void ReturnBook(int bookId, int userId)
+    public (bool success, string message) ReturnBook(int bookId, int userId)
     {
         var borrowedBook = _context.Books.Find(bookId);
         var user = _context.Users.Find(userId);
 
         if (borrowedBook is null || user is null)
         {
-            throw new InvalidOperationException("Book or user does not exist.");
+            return (false, "Book or user does not exist.");
         }
 
         var book = user.BorrowedBooks?.Single(p => p.Id == bookId);
@@ -101,6 +109,12 @@ public class BookService
             borrowedBook.BorrowedBy = null;
             borrowedBook.Until = null;
             _context.SaveChanges();
+            return (true, "Book was returned successfully.");
+
+        }
+        else
+        {
+            return (false, "User does not have this book borrowed.");
         }
     }
 
